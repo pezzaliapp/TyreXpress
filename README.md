@@ -4,24 +4,23 @@
 
 # 🚗 TyreXpress — PWA Marketplace per Pneumatici Usati  
 
-TyreXpress è un progetto **open source gratuito** nasce oggi il 1° settembre 2021 da **PezzaliAPP**.  
+TyreXpress è un progetto **open source gratuito** nato nel 2021 da **PezzaliAPP**.  
 È una **Progressive Web App (PWA)** semplice e immediata che permette di **vendere, scambiare e acquistare pneumatici usati**.  
 
-Pensata inizialmente per i **gommisti**, oggi è disponibile per tutti:  
-- 🔧 **Officine** che vogliono rivendere gomme in buone condizioni.  
-- 🛞 **Privati** che hanno set di gomme o cerchi usati da proporre.  
-- 🏪 **Gommisti e rivenditori** che desiderano trasformare un problema di stoccaggio in un’opportunità di guadagno.  
+TyreXpress cresce costantemente: ogni circa 6 mesi viene arricchita con nuove funzioni per rispondere alle esigenze di officine, gommisti e privati.  
+Oggi integra strumenti per la **pubblicazione social**, con descrizioni pronte per **Facebook Marketplace** e caption ottimizzate per **TikTok**, così da rendere gli annunci immediatamente condivisibili.  
 
 ---
 
 ## 🎯 Perché TyreXpress?  
 Ogni giorno migliaia di pneumatici usati finiscono al macero, anche se ancora perfettamente utilizzabili.  
-TyreXpress nasce con un obiettivo semplice: **ridare valore a ciò che può ancora viaggiare**.  
+TyreXpress ha un obiettivo semplice: **ridare valore a ciò che può ancora viaggiare**.  
 
 - ✅ **Gratis e open source**: chiunque può scaricarla, usarla o trasformarla nella propria app.  
 - ✅ **Facile da usare**: funziona da browser, senza installazioni complesse.  
 - ✅ **B2B e B2C**: utile sia per la rivendita tra professionisti, sia per la vendita al cliente finale.  
-- ✅ **Condivisione rapida**: le schede create possono essere copiate e pubblicate subito su **Facebook Marketplace** o usate come caption per **TikTok**, WhatsApp, Instagram, ecc.  
+- ✅ **Sempre aggiornata**: ogni 6 mesi circa vengono introdotte nuove funzioni, miglioramenti e ottimizzazioni.  
+- ✅ **Orientata ai social**: pronta per Facebook, TikTok, WhatsApp, Instagram.  
 - ✅ **Green**: rivendere gomme significa anche ridurre sprechi e costi di smaltimento.  
 
 ---
@@ -58,7 +57,7 @@ Puoi utilizzarlo, modificarlo e pubblicarlo come tua app personale o aziendale.
 TyreXpress non è solo un’app:  
 è un **gesto di fiducia** per dare nuova vita ai pneumatici, abbattere sprechi e aiutare chiunque — dal piccolo gommista al privato cittadino — a **trasformare un rifiuto in risorsa**.  
 
-Un progetto nato per essere **aperto, libero e utile a tutti**.  
+Un progetto **aperto, libero e utile a tutti**, che continua ad evolversi con aggiornamenti regolari per rimanere al passo con le nuove abitudini digitali.  
 
 ---
 
@@ -70,4 +69,4 @@ Un progetto nato per essere **aperto, libero e utile a tutti**.
 👉 Installa, usa e condividi.  
 Con TyreXpress il mercato delle gomme usate diventa semplice, trasparente e alla portata di tutti.  
 
-#TyreXpress #PezzaliAPP #OpenSource #GommeUsate #EconomiaCircolare
+#TyreXpress #PezzaliAPP #OpenSource #GommeUsate #EconomiaCircolare #FacebookMarketplace #TikTok
