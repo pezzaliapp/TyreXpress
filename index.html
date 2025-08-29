@@ -9,7 +9,7 @@
   <link rel="icon" type="image/x-icon" href="icons/favicon.ico">
   <link rel="apple-touch-icon" href="icons/icon-192.png">
   <style>
-    :root{--bg:#0f172a;--card:#111827;--ink:#e5e7eb;--muted:#9ca3af;--accent:#22c55e;--line:#1f2937}
+    :root{--bg:#0f172a;--card:#111827;--ink:#e5e7eb;--muted:#9ca3af;--accent:#22c55e;--line:#1f2937;--danger:#ef4444}
     *{box-sizing:border-box} html,body{margin:0;padding:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Arial,sans-serif;background:var(--bg);color:var(--ink)}
     header{padding:16px;border-bottom:1px solid var(--line);background:#0b1220;position:sticky;top:0;z-index:2}
     h1{margin:0;font-size:22px;color:var(--accent)}
@@ -17,12 +17,24 @@
     section{margin:16px 0}
     .card{background:#0f172a;border:1px solid var(--line);border-radius:12px;padding:14px}
     form{display:grid;gap:10px}
-    input,button{padding:10px;border-radius:10px;border:1px solid var(--line);background:#0b1220;color:var(--ink)}
-    button{background:var(--accent);border:none;color:#052d13;cursor:pointer}
+    input,textarea,button,select{padding:10px;border-radius:10px;border:1px solid var(--line);background:#0b1220;color:var(--ink);width:100%}
+    textarea{min-height:70px;resize:vertical}
+    button{cursor:pointer}
+    .btn{background:var(--accent);border:none;color:#052d13}
+    .btn.secondary{background:#0b1220;border:1px solid var(--line);color:var(--ink)}
+    .btn.danger{background:var(--danger);border:none;color:#fff}
+    .grid{display:grid;grid-template-columns:repeat(12,1fr);gap:12px}
+    .col-6{grid-column:span 6}.col-4{grid-column:span 4}.col-3{grid-column:span 3}.col-12{grid-column:span 12}
+    @media (max-width:720px){.col-6,.col-4,.col-3{grid-column:span 12}}
     .list{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
-    .item{border:1px solid var(--line);border-radius:12px;padding:12px;background:#0b1220}
+    .item{border:1px solid var(--line);border-radius:12px;background:#0b1220;overflow:hidden;display:flex;flex-direction:column}
+    .item img{width:100%;height:180px;object-fit:cover;background:#0b1220}
+    .item-body{padding:12px;display:flex;flex-direction:column;gap:6px}
     .muted{color:var(--muted)}
+    .row{display:flex;gap:8px;flex-wrap:wrap}
+    .toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
     footer{padding:24px;text-align:center;color:var(--muted);border-top:1px solid var(--line)}
+    .pill{display:inline-block;padding:2px 8px;border:1px solid var(--line);border-radius:999px;font-size:12px;color:var(--muted)}
   </style>
 </head>
 <body>
@@ -35,13 +47,27 @@
     <section class="card">
       <h2>Inserisci Gomma</h2>
       <form id="tyreForm" autocomplete="off">
-        <input id="marca" type="text" placeholder="Marca (es. Pirelli)" required>
-        <input id="misura" type="text" placeholder="Misura (es. 205/55 R16)" required>
-        <input id="dot" type="text" placeholder="DOT (anno-settimana, es. 2322)">
-        <input id="battistrada" type="number" step="0.1" placeholder="Battistrada residuo (mm)">
-        <input id="prezzo" type="number" step="1" placeholder="Prezzo €">
-        <input id="citta" type="text" placeholder="Città / Zona">
-        <button type="submit">Aggiungi</button>
+        <div class="grid">
+          <input class="col-6" id="marca"     type="text" placeholder="Marca (es. Pirelli)" required>
+          <input class="col-6" id="misura"    type="text" placeholder="Misura (es. 205/55 R16)" required>
+          <input class="col-4" id="dot"       type="text" placeholder="DOT (anno-settimana, es. 2322)">
+          <input class="col-4" id="battistrada" type="number" step="0.1" placeholder="Battistrada residuo (mm)">
+          <input class="col-4" id="prezzo"    type="number" step="1" placeholder="Prezzo €">
+          <input class="col-6" id="citta"     type="text" placeholder="Città / Zona">
+          <input class="col-6" id="contatto"  type="tel"  placeholder="Telefono / WhatsApp (opzionale)">
+          <input class="col-12" id="cliente"  type="text" placeholder="Cliente finale / Gommista / Officina (opzionale)">
+          <textarea class="col-12" id="note" placeholder="Note (stato, coppia gomme, condizioni, ecc.)"></textarea>
+          <div class="col-12">
+            <label class="muted">Foto (carica o scatta):</label>
+            <input id="foto" type="file" accept="image/*" capture="environment">
+          </div>
+          <div class="col-12 row">
+            <button type="submit" class="btn">Aggiungi</button>
+            <button type="button" id="exportJson" class="btn secondary">Esporta JSON</button>
+            <button type="button" id="exportCsv"  class="btn secondary">Esporta CSV</button>
+            <button type="button" id="clearAll"   class="btn danger">Svuota elenco</button>
+          </div>
+        </div>
       </form>
     </section>
 
@@ -56,59 +82,130 @@
   </footer>
 
   <script>
-    // PWA register
+    // —— PWA register
     if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./service-worker.js');
-      });
+      window.addEventListener('load', () => navigator.serviceWorker.register('./service-worker.js'));
     }
 
-    const $ = id => document.getElementById(id);
+    // —— Helpers
+    const $ = (id) => document.getElementById(id);
     const form = $('tyreForm');
     const list = $('list');
 
-    function loadTyres(){
-      return JSON.parse(localStorage.getItem('tyres')||'[]');
-    }
-    function saveTyres(arr){
-      localStorage.setItem('tyres', JSON.stringify(arr));
-    }
-    function render(){
-      const tyres = loadTyres();
-      list.innerHTML = '';
-      tyres.forEach((t,idx)=>{
-        const card = document.createElement('div');
-        card.className = 'item';
-        card.innerHTML = \`
-          <div><strong>\${t.marca}</strong> — \${t.misura}</div>
-          <div class="muted">DOT \${t.dot||'—'} · \${t.battistrada? (t.battistrada+' mm'):'—'} · \${t.citta||'—'}</div>
-          <div><strong>€ \${t.prezzo||'—'}</strong></div>
-          <div style="display:flex;gap:8px;margin-top:8px">
-            <button data-del="\${idx}" style="background:#ef4444;color:#fff;border:none;padding:8px 10px;border-radius:8px;cursor:pointer">Elimina</button>
-          </div>
-        \`;
-        list.appendChild(card);
-      });
-      // attach handlers
-      document.querySelectorAll('button[data-del]').forEach(btn=>{
-        btn.onclick = () => {
-          const tyres = loadTyres();
-          tyres.splice(parseInt(btn.dataset.del),1);
-          saveTyres(tyres);
-          render();
-        };
+    const loadTyres = () => JSON.parse(localStorage.getItem('tyres') || '[]');
+    const saveTyres = (arr) => localStorage.setItem('tyres', JSON.stringify(arr));
+
+    // —— Image to DataURL
+    function fileToDataURL(file) {
+      return new Promise((res, rej) => {
+        if (!file) return res('');
+        const reader = new FileReader();
+        reader.onload = () => res(reader.result);
+        reader.onerror = rej;
+        reader.readAsDataURL(file);
       });
     }
 
-    form.addEventListener('submit', (e)=>{
+    // —— FB Marketplace description template
+    function fbDescription(t){
+      const lines = [
+        `Vendo pneumatico usato`,
+        `Marca: ${t.marca}`,
+        `Misura: ${t.misura}`,
+        t.dot ? `DOT: ${t.dot}` : null,
+        t.battistrada ? `Battistrada: ${t.battistrada} mm` : null,
+        t.citta ? `Zona: ${t.citta}` : null,
+        t.cliente ? `Rivenditore/Cliente: ${t.cliente}` : null,
+        t.note ? `Note: ${t.note}` : null,
+        t.prezzo ? `Prezzo: € ${t.prezzo}` : null,
+        t.contatto ? `Contatto: ${t.contatto}` : null,
+        `#TyreXpress #GommeUsate #EconomiaCircolare`
+      ].filter(Boolean);
+      return lines.join('\n');
+    }
+
+    // —— TikTok caption (per video/slide manuali)
+    function tiktokCaption(t){
+      return `Gomma usata ${t.marca} ${t.misura} ${t.battistrada?'- '+t.battistrada+'mm':''} ${t.citta?'- '+t.citta:''} €${t.prezzo||''} #TyreXpress #gommista #gommeusate #autofficina`;
+    }
+
+    // —— Render list
+    function render(){
+      const tyres = loadTyres();
+      list.innerHTML = '';
+      tyres.forEach((t, idx) => {
+        const el = document.createElement('div');
+        el.className = 'item';
+        el.innerHTML = `
+          ${t.foto ? `<img src="${t.foto}" alt="foto pneumatico">` : `<div style="height:180px;background:#0f172a;display:flex;align-items:center;justify-content:center" class="muted">Nessuna foto</div>`}
+          <div class="item-body">
+            <div><strong>${t.marca}</strong> — ${t.misura} ${t.prezzo?`· <strong>€ ${t.prezzo}</strong>`:''}</div>
+            <div class="muted">${t.dot?`DOT ${t.dot} · `:''}${t.battistrada?`${t.battistrada} mm · `:''}${t.citta || ''}</div>
+            ${t.cliente?`<div class="pill">Cliente/Rivenditore: ${t.cliente}</div>`:''}
+            ${t.note?`<div class="muted">${t.note}</div>`:''}
+            <div class="toolbar">
+              <button class="btn secondary" data-copyfb="${idx}">Copia descrizione FB</button>
+              <button class="btn secondary" data-copytt="${idx}">Caption TikTok</button>
+              <button class="btn secondary" data-share="${idx}">Condividi</button>
+              ${t.foto ? `<a class="btn secondary" href="${t.foto}" download="tyre_${idx}.png">Scarica foto</a>`:''}
+              <button class="btn danger" data-del="${idx}">Elimina</button>
+            </div>
+          </div>
+        `;
+        list.appendChild(el);
+      });
+
+      // attach actions
+      list.querySelectorAll('[data-del]').forEach(b => b.onclick = () => {
+        const tyres = loadTyres();
+        tyres.splice(parseInt(b.dataset.del),1);
+        saveTyres(tyres); render();
+      });
+      list.querySelectorAll('[data-copyfb]').forEach(b => b.onclick = async () => {
+        const t = loadTyres()[parseInt(b.dataset.copyfb)];
+        await navigator.clipboard.writeText(fbDescription(t));
+        alert('Descrizione FB copiata negli appunti.');
+      });
+      list.querySelectorAll('[data-copytt]').forEach(b => b.onclick = async () => {
+        const t = loadTyres()[parseInt(b.dataset.copytt)];
+        await navigator.clipboard.writeText(tiktokCaption(t));
+        alert('Caption TikTok copiata negli appunti.');
+      });
+      list.querySelectorAll('[data-share]').forEach(b => b.onclick = async () => {
+        const t = loadTyres()[parseInt(b.dataset.share)];
+        const text = fbDescription(t);
+        try{
+          if (navigator.canShare && t.foto) {
+            const res = await fetch(t.foto); const blob = await res.blob();
+            const file = new File([blob], 'tyre.png', {type: blob.type});
+            if (navigator.canShare({files:[file]})) {
+              await navigator.share({title:'TyreXpress', text, files:[file]});
+              return;
+            }
+          }
+          if (navigator.share) { await navigator.share({title:'TyreXpress', text}); return; }
+          await navigator.clipboard.writeText(text);
+          alert('Condivisione non supportata: testo copiato.');
+        }catch(e){ console.log(e); }
+      });
+    }
+
+    // —— Form submit
+    form.addEventListener('submit', async (e) => {
       e.preventDefault();
+      const file = $('foto').files[0];
+      const fotoData = await fileToDataURL(file);
       const tyre = {
         marca: $('marca').value.trim(),
         misura: $('misura').value.trim(),
         dot: $('dot').value.trim(),
         battistrada: $('battistrada').value,
         prezzo: $('prezzo').value,
-        citta: $('citta').value.trim()
+        citta: $('citta').value.trim(),
+        contatto: $('contatto').value.trim(),
+        cliente: $('cliente').value.trim(),
+        note: $('note').value.trim(),
+        foto: fotoData
       };
       const tyres = loadTyres();
       tyres.unshift(tyre);
@@ -116,6 +213,31 @@
       form.reset();
       render();
     });
+
+    // —— Export JSON
+    $('exportJson').onclick = () => {
+      const blob = new Blob([JSON.stringify(loadTyres(), null, 2)], {type: 'application/json'});
+      const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'tyres.json'; a.click();
+      URL.revokeObjectURL(a.href);
+    };
+
+    // —— Export CSV
+    $('exportCsv').onclick = () => {
+      const cols = ['marca','misura','dot','battistrada','prezzo','citta','contatto','cliente','note','foto'];
+      const rows = loadTyres().map(t => cols.map(k => {
+        const v = (t[k] ?? '').toString().replace(/"/g,'""');
+        return `"${v}"`;
+      }).join(','));
+      const csv = [cols.join(','), ...rows].join('\n');
+      const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+      const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'tyres.csv'; a.click();
+      URL.revokeObjectURL(a.href);
+    };
+
+    // —— Clear all
+    $('clearAll').onclick = () => {
+      if (confirm('Sicuro di voler svuotare l’elenco?')) { localStorage.removeItem('tyres'); render(); }
+    };
 
     render();
   </script>
