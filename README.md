@@ -4,7 +4,7 @@
 
 # 🚗 TyreXpress — PWA Marketplace per Pneumatici Usati  
 
-TyreXpress è un progetto **open source gratuito** nato nel 2021 da **PezzaliAPP**.  
+TyreXpress è un progetto **open source gratuito** nasce oggi il 1° settembre 2021 da **PezzaliAPP**.  
 È una **Progressive Web App (PWA)** semplice e immediata che permette di **vendere, scambiare e acquistare pneumatici usati**.  
 
 Pensata inizialmente per i **gommisti**, oggi è disponibile per tutti:  
